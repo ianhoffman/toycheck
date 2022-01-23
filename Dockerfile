@@ -13,14 +13,15 @@ RUN apt install -y \
 
 RUN adduser --shell /bin/bash devuser
 USER devuser
-WORKDIR /home/devuser
+WORKDIR /home/devuser/toycheck
 
 # No need for sandboxing because Docker is already a sandbox
 RUN opam init --disable-sandboxing
-RUN opam install -y \
-	dune
+RUN opam install -y dune
 # Required for LSP integration with VSCode
 RUN opam install -y \
-	merlin \
+  merlin \
 	ocaml-lsp-server \
 	ocamlformat-rpc
+# Install project dependencies
+RUN opam install -y . --deps-only --with-test
