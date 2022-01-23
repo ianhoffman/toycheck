@@ -1,19 +1,17 @@
 open OUnit2
-open Toycheck
+open Toycheck_parser.Token
 
-let scan s = 
-  Scanner.scan s
-  |> List.map Toycheck.Scanner.show_token
+let scan = Toycheck.scan
 
 let test_scans_identity _ =
   scan {|
     fn a => a
   |}
   |> assert_equal [
-    "Fn";
-    "Var(a)";
-    "Darrow";
-    "Var(a)"
+    Fn;
+    Var("a");
+    Darrow;
+    Var("a")
   ]
 
 let test_scans_const _ =
@@ -21,13 +19,13 @@ let test_scans_const _ =
     fn a => fn b => a
   |}
   |> assert_equal [
-    "Fn"; 
-    "Var(a)";
-    "Darrow";
-    "Fn";
-    "Var(b)";
-    "Darrow";
-    "Var(a)"
+    Fn; 
+    Var("a");
+    Darrow;
+    Fn;
+    Var("b");
+    Darrow;
+    Var("a")
   ]
 
 let test_scans_compose _ =
@@ -35,20 +33,20 @@ let test_scans_compose _ =
     fn f => fn g => fn x => f (g x)
   |}
   |> assert_equal [
-    "Fn";
-    "Var(f)";
-    "Darrow";
-    "Fn";
-    "Var(g)";
-    "Darrow";
-    "Fn";
-    "Var(x)";
-    "Darrow";
-    "Var(f)";
-    "LParen";
-    "Var(g)";
-    "Var(x)";
-    "RParen";
+    Fn;
+    Var("f");
+    Darrow;
+    Fn;
+    Var("g");
+    Darrow;
+    Fn;
+    Var("x");
+    Darrow;
+    Var("f");
+    LParen;
+    Var("g");
+    Var("x");
+    RParen;
   ]
 
 let test_scans_pred _ =
@@ -56,16 +54,16 @@ let test_scans_pred _ =
     fn pred => if pred 1 then 2 else 3
   |}
   |> assert_equal [
-    "Fn";
-    "Var(pred)";
-    "Darrow";
-    "If";
-    "Var(pred)";
-    "Int(1)";
-    "Then";
-    "Int(2)";
-    "Else";
-    "Int(3)";
+    Fn;
+    Var("pred");
+    Darrow;
+    If;
+    Var("pred");
+    Int(1);
+    Then;
+    Int(2);
+    Else;
+    Int(3);
   ]
 
 let test_scans_inc _ =
@@ -81,35 +79,35 @@ let test_scans_inc _ =
     end
   |}
   |> assert_equal [
-    "Let";
-    "Val";
-    "Var(inc)";
-    "Equal";
-    "Fn";
-    "Var(a)";
-    "Darrow";
-    "Var(a)";
-    "Add";
-    "Int(1)";
-    "In";
-    "Let";
-    "Val";
-    "Var(dec)";
-    "Equal";
-    "Fn";
-    "Var(a)";
-    "Darrow";
-    "Var(a)";
-    "Sub";
-    "Int(1)";
-    "In";
-    "Var(dec)";
-    "LParen";
-    "Var(inc)";
-    "Int(42)";
-    "RParen";
-    "End";
-    "End";
+    Let;
+    Val;
+    Var("inc");
+    Equal;
+    Fn;
+    Var("a");
+    Darrow;
+    Var("a");
+    Add;
+    Int(1);
+    In;
+    Let;
+    Val;
+    Var("dec");
+    Equal;
+    Fn;
+    Var("a");
+    Darrow;
+    Var("a");
+    Sub;
+    Int(1);
+    In;
+    Var("dec");
+    LParen;
+    Var("inc");
+    Int(42);
+    RParen;
+    End;
+    End;
   ]
 
 let suite =

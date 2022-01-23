@@ -23,5 +23,3 @@ RUN opam install -y \
   merlin \
 	ocaml-lsp-server \
 	ocamlformat-rpc
-# Install project dependencies
-RUN opam install -y . --deps-only --with-test

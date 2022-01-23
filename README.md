@@ -7,6 +7,7 @@ A OCaml clone of https://github.com/igstan/itake-2015.
 * Run `docker-compose build` and wait awhile.
 * Once that's done, get a prompt in the container with `docker-compose run toycheck /bin/bash`.
 * Initialize opam: `eval $(opam env)`.
+* Install project dependencies: `opam install -y . --deps-only --with-test`.
 * Build the project: `dune build`.
 * Open up VSCode and, if you haven't already, install the [VSCode OCaml Platform](https://github.com/ocamllabs/vscode-ocaml-platform) extension.
 * Connect to the `toycheck` container in the "Remote Explorer" tab in VSCode. You'll want to open a project in the `home/devuser/toycheck` directory. 

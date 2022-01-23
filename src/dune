@@ -1,2 +1,3 @@
 (library
- (name toycheck))
+ (name toycheck)
+ (libraries toycheck_parser))
