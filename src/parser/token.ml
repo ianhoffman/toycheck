@@ -36,5 +36,5 @@ let show_token tok =
   | RParen -> "RParen"
   | Add -> "Add"
   | Sub -> "Sub"
-  | Int(v) -> "Int(" ^ string_of_int v ^ ")"
-  | Var(v) -> "Var(" ^ v ^ ")"
+  | Int v -> "Int(" ^ string_of_int v ^ ")"
+  | Var v -> "Var(" ^ v ^ ")"

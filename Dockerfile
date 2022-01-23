@@ -17,7 +17,10 @@ WORKDIR /home/devuser/toycheck
 
 # No need for sandboxing because Docker is already a sandbox
 RUN opam init --disable-sandboxing
-RUN opam install -y dune
+# Useful deps
+RUN opam install -y \
+  dune \
+  ocamlformat
 # Required for LSP integration with VSCode
 RUN opam install -y \
   merlin \
