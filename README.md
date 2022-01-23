@@ -1,6 +1,6 @@
 # Toycheck
 
-A OCaml clone of https://github.com/igstan/itake-2015.
+An OCaml clone of https://github.com/igstan/itake-2015.
 
 ## Getting Started
 
