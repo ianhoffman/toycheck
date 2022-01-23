@@ -1,0 +1,2 @@
+(tests
+ (names test_scanner))

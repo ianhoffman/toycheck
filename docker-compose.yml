@@ -1,0 +1,6 @@
+version: "3.9"
+services:
+  toycheck:
+    build: .
+    volumes:
+      - ./:/home/devuser/toycheck
