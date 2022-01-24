@@ -1,4 +1,4 @@
-open Toycheck_utils.PrintUtil
+open Toycheck_utils.Print_util
 
 type term =
   | Int of int

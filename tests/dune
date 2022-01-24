@@ -1,3 +1,3 @@
 (tests
  (libraries toycheck ounit2)
- (names test_scanner test_parser))
+ (names test_annotator test_scanner test_parser))

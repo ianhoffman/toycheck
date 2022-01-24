@@ -5,7 +5,7 @@ let rec string_to_list s =
       let tail = String.sub s 1 (n - 1) in
       List.cons (String.get s 0) (string_to_list tail)
 
-let is_white_space c = Char.equal c ' ' || Char.equal c '\n'
+let is_white_space c = match c with ' ' -> true | '\n' -> true | _ -> false
 let is_digit c = match c with '0' .. '9' -> true | _ -> false
 let to_digit c = Char.code c - 48
 

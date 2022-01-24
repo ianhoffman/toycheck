@@ -1,7 +1,8 @@
 open Toycheck_utils
 open Token
+open Char_util
 
-let from_string s =
+let from_char_list s =
   match s with
   | [] -> None
   | [ head ] -> Some (head, [])
@@ -9,13 +10,12 @@ let from_string s =
 
 let rec skip_white_space reader stream =
   match reader stream with
-  | Some (c, stream) when CharUtil.is_white_space c ->
-      skip_white_space reader stream
+  | Some (c, stream) when is_white_space c -> skip_white_space reader stream
   | _ -> stream
 
 let scan_digit next_char stream =
   match next_char stream with
-  | Some (c, s) when CharUtil.is_digit c -> Some (CharUtil.to_digit c, s)
+  | Some (c, s) when is_digit c -> Some (to_digit c, s)
   | _ -> None
 
 let scan_number next_char stream =
@@ -30,7 +30,7 @@ let scan_ident next_char stream =
   let rec recur stream result =
     match next_char stream with
     (* TODO: Allow _ if not the first char *)
-    | Some (c, s) when CharUtil.is_letter c -> recur s (result ^ String.make 1 c)
+    | Some (c, s) when is_letter c -> recur s (result ^ String.make 1 c)
     | _ when result == "" -> None
     | _ -> Some (result, stream)
   in
@@ -82,8 +82,8 @@ let consume reader stream =
 
 let scan s =
   let tokens, stream =
-    consume (scan_single from_string) (CharUtil.string_to_list s)
+    consume (scan_single from_char_list) (string_to_list s)
   in
-  match from_string (skip_white_space from_string stream) with
+  match from_char_list (skip_white_space from_char_list stream) with
   | Some (c, _) -> raise (Failure ("Unexpected character: " ^ String.make 1 c))
   | None -> tokens
