@@ -34,7 +34,7 @@ let scan_ident next_char stream =
     | _ -> Some (result, stream)
   in
   Option.map
-    (function 
+    (function
       | "if", s -> (If, s)
       | "then", s -> (Then, s)
       | "else", s -> (Else, s)

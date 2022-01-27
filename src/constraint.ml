@@ -7,7 +7,7 @@ end
 
 module ConstraintSet = Set.Make (Constraint)
 
-let rec collect (t: Typed_term.t) =
+let rec collect (t : Typed_term.t) =
   match t with
   | Int { t; _ } -> ConstraintSet.singleton { a = t; b = Int }
   | Bool { t; _ } -> ConstraintSet.singleton { a = t; b = Bool }
