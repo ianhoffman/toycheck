@@ -11,7 +11,12 @@ let tenv =
 
 let test_annotate_identity _ =
   match annotate (Term.Fun ("a", Term.Var "a")) tenv with
-  | Fun (Var t1, Binding (Var t2, "a"), Var (Var t3, "a")) ->
+  | Fun
+      {
+        t = Var t1;
+        param = { t = Var t2; name = "a" };
+        body = Var { t = Var t3; name = "a" };
+      } ->
       assert_bool "t1" (t1 != t2 && t1 != t3);
       assert_bool "t2" (t2 = t3)
   | _ -> assert_failure "Unexpected ret"
@@ -19,9 +24,17 @@ let test_annotate_identity _ =
 let test_annotate_const _ =
   match annotate (Term.Fun ("a", Term.Fun ("b", Term.Var "a"))) tenv with
   | Fun
-      ( Var t1,
-        Binding (Var t2, "a"),
-        Fun (Var t3, Binding (Var t4, "b"), Var (Var t5, "a")) ) ->
+      {
+        t = Var t1;
+        param = { t = Var t2; name = "a" };
+        body =
+          Fun
+            {
+              t = Var t3;
+              param = { t = Var t4; name = "b" };
+              body = Var { t = Var t5; name = "a" };
+            };
+      } ->
       assert_bool "t1" (t1 != t2 && t1 != t3 && t1 != t4 && t1 != t5);
       assert_bool "t2" (t2 != t3 && t2 != t4 && t2 = t5);
       assert_bool "t3" (t3 != t4 && t3 != t5);
@@ -42,19 +55,35 @@ let test_annotate_compose _ =
       tenv
   with
   | Fun
-      ( Var t1,
-        Binding (Var t2, "f"),
-        Fun
-          ( Var t3,
-            Binding (Var t4, "g"),
-            Fun
-              ( Var t5,
-                Binding (Var t6, "x"),
-                App
-                  ( Var t7,
-                    Var (Var t8, "f"),
-                    App (Var t9, Var (Var t10, "g"), Var (Var t11, "x")) ) ) )
-      ) ->
+      {
+        t = Var t1;
+        param = { t = Var t2; name = "f" };
+        body =
+          Fun
+            {
+              t = Var t3;
+              param = { t = Var t4; name = "g" };
+              body =
+                Fun
+                  {
+                    t = Var t5;
+                    param = { t = Var t6; name = "x" };
+                    body =
+                      App
+                        {
+                          t = Var t7;
+                          fn = Var { t = Var t8; name = "f" };
+                          arg =
+                            App
+                              {
+                                t = Var t9;
+                                fn = Var { t = Var t10; name = "g" };
+                                arg = Var { t = Var t11; name = "x" };
+                              };
+                        };
+                  };
+            };
+      } ->
       assert_bool "t1"
         (t1 != t2 && t1 != t3 && t1 != t4 && t1 != t5 && t1 != t6 && t1 != t7
        && t1 != t8 && t1 != t9 && t1 != t10 && t1 != t11);
@@ -87,13 +116,24 @@ let test_annotate_pred _ =
       tenv
   with
   | Fun
-      ( Var t1,
-        Binding (Var t2, "pred"),
-        If
-          ( Var t3,
-            App (Var t4, Var (Var t5, "pred"), Int (Var t6, 1)),
-            Int (Var t7, 2),
-            Int (Var t8, 3) ) ) ->
+      {
+        t = Var t1;
+        param = { t = Var t2; name = "pred" };
+        body =
+          If
+            {
+              t = Var t3;
+              cond =
+                App
+                  {
+                    t = Var t4;
+                    fn = Var { t = Var t5; name = "pred" };
+                    arg = Int { t = Var t6; value = 1 };
+                  };
+              left = Int { t = Var t7; value = 2 };
+              right = Int { t = Var t8; value = 3 };
+            };
+      } ->
       assert_bool "t1" (not_contains [ t2; t3; t4; t5; t6; t7; t8 ] t1);
       assert_bool "t2" (not_contains [ t3; t4; t6; t7; t8 ] t2 && t2 = t5);
       assert_bool "t3" (not_contains [ t4; t5; t6; t7; t8 ] t3);
@@ -121,35 +161,72 @@ let test_annotate_inc _ =
       tenv
   with
   | Let
-      ( Var t1,
-        Binding (Var t2, "inc"),
-        Fun
-          ( Var t3,
-            Binding (Var t4, "a"),
-            App
-              ( Var t5,
+      {
+        t = Var t1;
+        binding = { t = Var t2; name = "inc" };
+        value =
+          Fun
+            {
+              t = Var t3;
+              param = { t = Var t4; name = "a" };
+              body =
                 App
-                  ( Var t6,
-                    Var (Fun (Int, Fun (Int, Int)), "+"),
-                    Var (Var t7, "a") ),
-                Int (Var t8, 1) ) ),
-        Let
-          ( Var t9,
-            Binding (Var t10, "dec"),
-            Fun
-              ( Var t11,
-                Binding (Var t12, "a"),
+                  {
+                    t = Var t5;
+                    fn =
+                      App
+                        {
+                          t = Var t6;
+                          fn = Var { t = Fun (Int, Fun (Int, Int)); name = "+" };
+                          arg = Var { t = Var t7; name = "a" };
+                        };
+                    arg = Int { t = Var t8; value = 1 };
+                  };
+            };
+        body =
+          Let
+            {
+              t = Var t9;
+              binding = { t = Var t10; name = "dec" };
+              value =
+                Fun
+                  {
+                    t = Var t11;
+                    param = { t = Var t12; name = "a" };
+                    body =
+                      App
+                        {
+                          t = Var t13;
+                          fn =
+                            App
+                              {
+                                t = Var t14;
+                                fn =
+                                  Var
+                                    {
+                                      t = Fun (Int, Fun (Int, Int));
+                                      name = "-";
+                                    };
+                                arg = Var { t = Var t15; name = "a" };
+                              };
+                          arg = Int { t = Var t16; value = 1 };
+                        };
+                  };
+              body =
                 App
-                  ( Var t13,
-                    App
-                      ( Var t14,
-                        Var (Fun (Int, Fun (Int, Int)), "-"),
-                        Var (Var t15, "a") ),
-                    Int (Var t16, 1) ) ),
-            App
-              ( Var t17,
-                Var (Var t18, "dec"),
-                App (Var t19, Var (Var t20, "inc"), Int (Var t21, 42)) ) ) ) ->
+                  {
+                    t = Var t17;
+                    fn = Var { t = Var t18; name = "dec" };
+                    arg =
+                      App
+                        {
+                          t = Var t19;
+                          fn = Var { t = Var t20; name = "inc" };
+                          arg = Int { t = Var t21; value = 42 };
+                        };
+                  };
+            };
+      } ->
       assert_bool "t1"
         (not_contains
            [
