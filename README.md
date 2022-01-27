@@ -21,3 +21,4 @@ Obviously I don't expect anyone but myself to work on this project, since it's j
 * Parser, inference, all that good stuff.
 * Setup "OCaml Platform" VSCode extension when building docker container (maybe using `devcontainer.json`).
 * Experiment with using Cram tests instead of OUnit.
+* Build OCaml project dependencies into Docker image.
