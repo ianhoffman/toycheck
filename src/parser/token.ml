@@ -18,8 +18,7 @@ type token =
   | Int of int
   | Var of string
 
-let show_token tok =
-  match tok with
+let show_token = function
   | If -> "If"
   | Then -> "Then"
   | Else -> "Else"

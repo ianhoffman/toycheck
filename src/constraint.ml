@@ -7,16 +7,16 @@ end
 
 module ConstraintSet = Set.Make (Constraint)
 
-let rec collect t =
+let rec collect (t: Typed_term.t) =
   match t with
-  | Typed_term.Int { t; _ } -> ConstraintSet.singleton { a = t; b = Int }
-  | Typed_term.Bool { t; _ } -> ConstraintSet.singleton { a = t; b = Bool }
-  | Typed_term.Fun { t; param; body } ->
+  | Int { t; _ } -> ConstraintSet.singleton { a = t; b = Int }
+  | Bool { t; _ } -> ConstraintSet.singleton { a = t; b = Bool }
+  | Fun { t; param; body } ->
       collect body
       |> ConstraintSet.add
            { a = t; b = Fun (param.t, Typed_term.extract_ty body) }
-  | Typed_term.Var _ -> ConstraintSet.empty
-  | Typed_term.App { t; fn; arg } ->
+  | Var _ -> ConstraintSet.empty
+  | App { t; fn; arg } ->
       collect arg
       |> ConstraintSet.union (collect fn)
       |> ConstraintSet.add
@@ -28,14 +28,14 @@ let rec collect t =
              a = Typed_term.extract_ty fn;
              b = Type.Fun (Typed_term.extract_ty arg, t);
            }
-  | Typed_term.If { t; cond; left; right } ->
+  | If { t; cond; left; right } ->
       collect right
       |> ConstraintSet.union (collect left)
       |> ConstraintSet.union (collect cond)
       |> ConstraintSet.add { a = Typed_term.extract_ty cond; b = Bool }
       |> ConstraintSet.add { a = Typed_term.extract_ty left; b = t }
       |> ConstraintSet.add { a = Typed_term.extract_ty right; b = t }
-  | Typed_term.Let { t; binding; value; body } ->
+  | Let { t; binding; value; body } ->
       collect body
       |> ConstraintSet.union (collect value)
       |> ConstraintSet.add { a = t; b = Typed_term.extract_ty body }

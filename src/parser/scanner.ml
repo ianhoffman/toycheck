@@ -2,8 +2,7 @@ open Toycheck_utils
 open Token
 open Char_util
 
-let from_char_list s =
-  match s with
+let from_char_list = function
   | [] -> None
   | [ head ] -> Some (head, [])
   | head :: tail -> Some (head, tail)
@@ -35,8 +34,7 @@ let scan_ident next_char stream =
     | _ -> Some (result, stream)
   in
   Option.map
-    (fun ret ->
-      match ret with
+    (function 
       | "if", s -> (If, s)
       | "then", s -> (Then, s)
       | "else", s -> (Else, s)
@@ -85,5 +83,5 @@ let scan s =
     consume (scan_single from_char_list) (string_to_list s)
   in
   match from_char_list (skip_white_space from_char_list stream) with
-  | Some (c, _) -> raise (Failure ("Unexpected character: " ^ String.make 1 c))
+  | Some (c, _) -> failwith ("Unexpected character: " ^ String.make 1 c)
   | None -> tokens

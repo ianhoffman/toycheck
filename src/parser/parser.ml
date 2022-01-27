@@ -1,8 +1,7 @@
 exception UnexpectedEndOfStream of string
 exception ParseError of Token.token * string
 
-let next_is_at_exp tokens =
-  match tokens with
+let next_is_at_exp = function
   | Token.Int _ :: _ -> true
   | Token.False :: _ -> true
   | Token.True :: _ -> true
@@ -11,8 +10,7 @@ let next_is_at_exp tokens =
   | Token.LParen :: _ -> true
   | _ -> false
 
-let rec parse_let tokens =
-  match tokens with
+let rec parse_let = function
   | Token.Val :: tokens -> (
       match tokens with
       | Token.Var binding_name :: tokens -> (
@@ -36,8 +34,7 @@ let rec parse_let tokens =
   | token :: _ -> raise (ParseError (token, "VAL"))
   | _ -> raise (UnexpectedEndOfStream "VAL")
 
-and parse_at_exp tokens =
-  match tokens with
+and parse_at_exp = function
   | Token.Int n :: tokens -> (Term.Int n, tokens)
   | Token.True :: tokens -> (Term.Bool true, tokens)
   | Token.False :: tokens -> (Term.Bool false, tokens)
@@ -91,8 +88,7 @@ and parse_if tokens =
   | token :: _ -> raise (ParseError (token, "THEN"))
   | _ -> raise (UnexpectedEndOfStream "THEN")
 
-and parse_fn tokens =
-  match tokens with
+and parse_fn = function
   | Token.Var param :: rest -> (
       match rest with
       | Token.Darrow :: tokens ->
@@ -103,8 +99,7 @@ and parse_fn tokens =
   | token :: _ -> raise (ParseError (token, "VAR"))
   | _ -> raise (UnexpectedEndOfStream "VAR")
 
-and parse_exp tokens =
-  match tokens with
+and parse_exp = function
   | tokens when next_is_at_exp tokens -> parse_inf_exp tokens
   | Token.If :: tokens -> parse_if tokens
   | Token.Fn :: tokens -> parse_fn tokens
