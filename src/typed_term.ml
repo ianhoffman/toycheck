@@ -1,5 +1,7 @@
 type binding = { t : Type.t; name : string }
 
+let bind t name = { t; name }
+
 type t =
   | Int of { t : Type.t; value : int }
   | Bool of { t : Type.t; value : bool }

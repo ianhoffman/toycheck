@@ -1,4 +1,5 @@
 (* Exported modules *)
+module Constraint = Constraint
 module TEnv = Annotator.TEnv
 module Type = Type
 module Typed_term = Typed_term

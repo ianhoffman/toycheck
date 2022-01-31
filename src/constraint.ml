@@ -3,6 +3,8 @@ module Constraint = struct
 
   let compare t1 t2 =
     match compare t1.a t2.a with 0 -> compare t1.b t2.b | v -> v
+
+  let make a b = { a; b }
 end
 
 module ConstraintSet = Set.Make (Constraint)
